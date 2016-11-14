@@ -25,14 +25,14 @@ $(document).ready(function() {
     $("#add-train").on("click", function() {
         name = $("#train-name").val().trim();
         destination = $("#destination").val().trim();
-        startTime = $("#startTime").val().trim();
+        startTime = $("#startTime").val();
         frequency = $("#frequency").val().trim();
 
         //push the input values to firebase as an object
         database.ref().push({
             name: name,
             destination: destination,
-            startTime: startTime,
+            startTime: moment(startTime).format("LTS"),
             frequency: frequency
 
         });
@@ -42,7 +42,7 @@ $(document).ready(function() {
 
     //log any errors
     // function(errorObject) {
- //     console.log("Errors handled: " + errorObject.code);
- // }
+    //     console.log("Errors handled: " + errorObject.code);
+    // }
 
 });
