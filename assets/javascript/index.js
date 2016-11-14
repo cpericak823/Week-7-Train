@@ -11,7 +11,7 @@ $(document).ready(function() {
     };
     firebase.initializeApp(config);
 
-    //set global variables as strings
+    //set global variables
     var database = firebase.database();
     var table = 0;
     var name = "";
@@ -29,7 +29,7 @@ $(document).ready(function() {
         frequency = $("#frequency").val().trim();
 
         //push the input values to firebase as an object
-        database.ref.push({
+        database.ref().push({
             name: name,
             destination: destination,
             startTime: startTime,
@@ -41,7 +41,8 @@ $(document).ready(function() {
     });
 
     //log any errors
-    function(errorObject) {
-        console.log("Errors handled: " + errorObject.code);
-    }
+    // function(errorObject) {
+ //     console.log("Errors handled: " + errorObject.code);
+ // }
+
 });
