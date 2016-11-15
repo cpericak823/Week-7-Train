@@ -26,12 +26,6 @@ $(document).ready(function() {
         name = $("#train-name").val().trim();
         destination = $("#destination").val().trim();
         startTime = $("#start-time").val();
-        // date = new Date;
-        // hours = startTime.split(':')[0];
-        // minutes = startTime.split(":")[1];
-        // date.setHours(hours);
-        // date.setMinutes(minutes);
-
         frequency = $("#frequency").val().trim();
 
         //push the input values to firebase as an object
@@ -44,6 +38,16 @@ $(document).ready(function() {
         });
         //allows for the page to not be refreshed
         return false;
+    });
+
+    //on click of add train button, add a row to the table and add 5 cells per row
+    $("#add-train").on("click", function() {
+        var row = $('#table').insertRow(table);
+        var cell0 = row.insertCell(0);
+        var cell1 = row.insertCell(1);
+        var cell2 = row.insertCell(2);
+        var cell3 = row.insertCell(3);
+        var cell4 = row.insertCell(4);
     });
 
     //log any errors
