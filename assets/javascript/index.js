@@ -25,14 +25,20 @@ $(document).ready(function() {
     $("#add-train").on("click", function() {
         name = $("#train-name").val().trim();
         destination = $("#destination").val().trim();
-        startTime = $("#startTime").val();
+        startTime = $("#start-time").val();
+        // date = new Date;
+        // hours = startTime.split(':')[0];
+        // minutes = startTime.split(":")[1];
+        // date.setHours(hours);
+        // date.setMinutes(minutes);
+
         frequency = $("#frequency").val().trim();
 
         //push the input values to firebase as an object
         database.ref().push({
             name: name,
             destination: destination,
-            startTime: moment(startTime).format("LTS"),
+            startTime: moment(startTime, "HH:mm").format("LTS"),
             frequency: frequency
 
         });
@@ -44,5 +50,8 @@ $(document).ready(function() {
     // function(errorObject) {
     //     console.log("Errors handled: " + errorObject.code);
     // }
+
+    //update table with results
+
 
 });
