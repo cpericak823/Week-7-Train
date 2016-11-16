@@ -20,6 +20,8 @@ $(document).ready(function() {
     var frequency = "";
     var nextArrival = "";
     var minutesAway = "";
+    var currentTime = moment();
+
 
     //capture the value of the input boxes on click of the submit button and set equal to the global variables
     $("#add-train").on("click", function() {
@@ -34,6 +36,11 @@ $(document).ready(function() {
             destination: destination,
             startTime: moment(startTime, "HH:mm").format("LTS"),
             frequency: frequency
+                //for next arrival, write a for a loop that adds the frequency to the start time and loop through continuously comparing to the current time. 
+                //Once the next arrival is greater than the current time, display that time as the next arrival.
+
+            //for minutes away subtract the current time from minutes away using moment and .diff
+            //append to dom in minutes as minutes away
 
         });
         //allows for the page to not be refreshed
@@ -56,6 +63,6 @@ $(document).ready(function() {
     // }
 
     //update table with results
-
+    //use a while loop to display database results for all train schedule
 
 });
