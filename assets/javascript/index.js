@@ -1,17 +1,6 @@
 //load the document
 $(document).ready(function() {
 
-    //on click of add train button, add a row to the table and add 5 cells per row
-    var table = 0;
-    $("#add-train").on("click", function() {
-        var row = $('#table').insertRow(table);
-        var cell0 = row.insertCell(0);
-        var cell1 = row.insertCell(1);
-        var cell2 = row.insertCell(2);
-        var cell3 = row.insertCell(3);
-        var cell4 = row.insertCell(4);
-    });
-
     //initalize firebase
     var config = {
         apiKey: "AIzaSyCY4Py0GyYljXFx7ynNupYB4B9QAaFyL0c",
