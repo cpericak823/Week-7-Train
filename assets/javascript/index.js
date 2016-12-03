@@ -18,9 +18,7 @@ $(document).ready(function() {
     var destination = "";
     var startTime = "";
     var frequency = "";
-    var nextArrival = "";
     var minutesAway = "";
-    var currentTime = moment();
 
     //capture the value of the input boxes on click of the submit button and set equal to the global variables
     $("#add-train").on("click", function() {
@@ -28,7 +26,6 @@ $(document).ready(function() {
         destination = $("#destination").val().trim();
         startTime = $("#start-time").val();
         frequency = $("#frequency").val().trim();
-        // nextArrival = startTime + frequency;
 
         //push the input values to firebase as an object
         database.ref().push({
@@ -36,6 +33,7 @@ $(document).ready(function() {
             destination: destination,
             startTime: moment(startTime, "HH:mm").format("LTS"),
             frequency: frequency
+
         });
         //allows for the page to not be refreshed
         return false;
@@ -43,48 +41,33 @@ $(document).ready(function() {
 
     database.ref().on("child_added", function(childSnapshot) {
 
-        // Log everything that's coming out of snapshot
-        console.log(childSnapshot.val().name);
-        console.log(childSnapshot.val().destination);
-        console.log(childSnapshot.val().startTime);
-        console.log(childSnapshot.val().frequency);
-        console.log(childSnapshot.val().nextArrival);
-        console.log(childSnapshot.val().minutesAway);
+            // Log everything that's coming out of snapshot
+            console.log(childSnapshot.val().name);
+            console.log(childSnapshot.val().destination);
+            console.log(childSnapshot.val().startTime);
+            console.log(childSnapshot.val().frequency);
 
+            var row = $('<tr>');
 
-        var row = $('<tr>');
+            $(row).append('<td>').text(childSnapshot.val().name);
+            $(row).append('<td>').text(childSnapshot.val().destination);
+            $(row).append('<td>').text(childSnapshot.val().startTime);
+            $(row).append('<td>').text(childSnapshot.val().frequency);
+            $(row).append('<td>').text(nextArrival(childSnapshot.val().startTime, childSnapshot.val().frequency));
+            $(row).append('<td>').text(childSnapshot.val().minutesAway);
+            $('#table-body').append(row);
 
-        $(row).append($('<td>').text(childSnapshot.val().name));
-        $(row).append($('<td>').text(childSnapshot.val().destination));
-        $(row).append($('<td>').text(childSnapshot.val().startTime));
-        $(row).append($('<td>').text(childSnapshot.val().frequency));
-        $(row).append($('<td>').text("$" + childSnapshot.val().nextArrival));
-        $(row).append($('<td>').text("$" + childSnapshot.val().minutesAway));
-        $('#table-body').append(row);
+            // Handle the errors
+        },
+        function(errorObject) {
+            console.log("Errors handled: " + errorObject.code);
+        });
 
-        // Handle the errors
-    }, function(errorObject) {
-        console.log("Errors handled: " + errorObject.code);
-    });
+    function nextArrival(startTime, frequency) {
+        var currentTime = moment();
+        var numberOfTrains = Math.floor((currentTime - startTime) / frequency);
+        var lastTrainTime = (numberOfTrains * frequency) + startTime;
+        var nextArrival = lastTrainTime + frequency;
+    }
+
 });
-
-//for next arrival, write a for a loop that adds the frequency to the start time and loop through continuously comparing to the current time. 
-//Once the next arrival is greater than the current time, display that time as the next arrival.
-// for (var i = 0; i < currentTime; i++) {
-// if (nextArrival >= currentTime) {
-//     return false;
-// }
-
-//nextArrival: (currentTime- startTime)%frequency
-
-//for minutes away subtract the current time from minutes away using moment and .diff
-//append to dom in minutes as minutes away
-
-
-//log any errors
-// function(errorObject) {
-//     console.log("Errors handled: " + errorObject.code);
-// }
-
-//update table with results
-//use a while loop to display database results for all train schedule
