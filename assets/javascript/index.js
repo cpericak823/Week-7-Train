@@ -49,12 +49,11 @@ $(document).ready(function() {
 
             var row = $('<tr>');
 
-            $(row).append('<td>').text(childSnapshot.val().name);
-            $(row).append('<td>').text(childSnapshot.val().destination);
-            $(row).append('<td>').text(childSnapshot.val().startTime);
-            $(row).append('<td>').text(childSnapshot.val().frequency);
-            $(row).append('<td>').text(nextArrival(childSnapshot.val().startTime, childSnapshot.val().frequency));
-            $(row).append('<td>').text(childSnapshot.val().minutesAway);
+            $(row).append($('<td>').text(childSnapshot.val().name));
+            $(row).append($('<td>').text(childSnapshot.val().destination));
+            $(row).append($('<td>').text(childSnapshot.val().frequency));
+            $(row).append($('<td>').text(nextArrival(childSnapshot.val().startTime, childSnapshot.val().frequency)));
+            $(row).append($('<td>').text(childSnapshot.val().minutesAway));
             $('#table-body').append(row);
 
             // Handle the errors
