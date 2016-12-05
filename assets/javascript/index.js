@@ -63,10 +63,18 @@ $(document).ready(function() {
         });
 
     function nextArrival(startTime, frequency) {
+        //set the current time
         var currentTime = moment();
+
+        //calculate the number of trains bu subtracting the currentTime from the startTime and dividing by the frequency and get a whole numbe
         var numberOfTrains = Math.floor((currentTime - startTime) / frequency);
+
+        //calculate the lastTrainTime multiplied by the frequency and add to the startTime
         var lastTrainTime = (numberOfTrains * frequency) + startTime;
+
+        //calculate the next arrival by taking the lastTrainTime plus the frequency
         var nextArrival = lastTrainTime + frequency;
     }
+
 
 });
