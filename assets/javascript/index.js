@@ -34,22 +34,25 @@ $(document).ready(function() {
             frequency: +frequency
 
         });
+        //reset the form
+        $("#new-train-form")[0].reset();
+
         //allows for the page to not be refreshed
         return false;
     });
 
+    //call on the database everything information is sent to the database
     database.ref().on("child_added", function(childSnapshot) {
 
             // Log everything that's coming out of snapshot
-            // console.log(childSnapshot.val().name);
-            // console.log(childSnapshot.val().destination);
-            // console.log(childSnapshot.val().startTime);
             console.log(childSnapshot.val());
 
-
             var row = $('<tr>');
+
+            //set the minutesAway to the minutes away function with the values of the startTime and frequency as arguments
             var minsAway = minutesAway(childSnapshot.val().startTime, childSnapshot.val().frequency);
 
+            //append the rows with the cell to hold the text of the value of the variables 
             $(row).append($('<td>').text(childSnapshot.val().name));
             $(row).append($('<td>').text(childSnapshot.val().destination));
             $(row).append($('<td>').text(childSnapshot.val().frequency));
@@ -67,6 +70,7 @@ $(document).ready(function() {
         //set the current time
         var currentTime = moment();
 
+        //set the startTimeMinutes variable equal to the difference between the current time and the start time
         var startTimeMinutes = currentTime.diff(moment(startTime, "HH:mm"), "minutes");
 
         console.log(startTimeMinutes, frequency);
@@ -85,12 +89,17 @@ $(document).ready(function() {
         console.log(moment(startTime, "HH:mm").add(nextArrivalMinutesPastStartTime, "minutes").format("HH:mm"));
 
         var minutesAway = -currentTime.diff(moment(startTime, "HH:mm").add(nextArrivalMinutesPastStartTime, "minutes"), "minutes");
-        // var minutesAway = moment(startTime, "HH:mm").add(nextArrivalMinutesPastStartTime, "minutes").diff(currentTime);
 
+        // var minutesAway = (moment(startTime, "HH:mm").add(nextArrivalMinutesPastStartTime, "minutes")).diff(currentTime);
+
+        //return the minutes away
         return minutesAway + 1;
     }
 
+    //define nextArrival function
     function nextArrival(minsAway) {
+
+        //use the minsAway argument to return the current time and add the minutes away and format
         return moment().add(minsAway, "minutes").format("HH:mm");
     }
 
