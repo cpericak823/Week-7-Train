@@ -18,6 +18,7 @@ $(document).ready(function() {
     var destination = "";
     var startTime = "";
     var frequency = "";
+    var childSnapshotArray = [];
 
     //capture the value of the input boxes on click of the submit button and set equal to the global variables
     $("#add-train").on("click", function() {
@@ -41,39 +42,27 @@ $(document).ready(function() {
         return false;
     });
 
-    //call on the database everything information is sent to the database
+    //call on the database everytime information is sent to the database
     database.ref().on("child_added", function(childSnapshot) {
 
-            // Log everything that's coming out of snapshot
-            console.log(childSnapshot.val());
+            //push the values of childSnapshot to the childSnapShotArray
+            childSnapshotArray.push(childSnapshot.val());
 
-            var row = $('<tr>');
+            //call the render function 
+            render();
 
-            //set the minutesAway to the minutes away function with the values of the startTime and frequency as arguments
-            var minsAway = minutesAway(childSnapshot.val().startTime, childSnapshot.val().frequency);
-
-            //append the rows with the cell to hold the text of the value of the variables 
-            $(row).append($('<td>').text(childSnapshot.val().name));
-            $(row).append($('<td>').text(childSnapshot.val().destination));
-            $(row).append($('<td>').text(childSnapshot.val().frequency));
-            $(row).append($('<td>').text(nextArrival(minsAway)));
-            $(row).append($('<td>').text(minsAway));
-            $('#table-body').append(row);
-
-            // Handle the errors
-        },
+        }, // Handle the errors
         function(errorObject) {
             console.log("Errors handled: " + errorObject.code);
         });
 
     function minutesAway(startTime, frequency) {
+
         //set the current time
         var currentTime = moment();
 
         //set the startTimeMinutes variable equal to the difference between the current time and the start time
         var startTimeMinutes = currentTime.diff(moment(startTime, "HH:mm"), "minutes");
-
-        console.log(startTimeMinutes, frequency);
 
         //calculate the number of trains bu subtracting the currentTime from the startTime and dividing by the frequency and get a whole number
         var numberOfTrains = Math.floor(startTimeMinutes / frequency);
@@ -84,16 +73,11 @@ $(document).ready(function() {
         //calculate the next arrival by taking the lastTrainTime plus the frequency
         var nextArrivalMinutesPastStartTime = lastTrainTime + frequency;
 
-        console.log(numberOfTrains, lastTrainTime, nextArrivalMinutesPastStartTime);
-
-        console.log(moment(startTime, "HH:mm").add(nextArrivalMinutesPastStartTime, "minutes").format("HH:mm"));
-
-        var minutesAway = -currentTime.diff(moment(startTime, "HH:mm").add(nextArrivalMinutesPastStartTime, "minutes"), "minutes");
-
-        // var minutesAway = (moment(startTime, "HH:mm").add(nextArrivalMinutesPastStartTime, "minutes")).diff(currentTime);
+        //calculate minutes away by taking the current starttime and adding next arrival minutes and taking the difference from the current starttime
+        var minutesAway = moment(startTime, "HH:mm").add(nextArrivalMinutesPastStartTime, "minutes").diff(currentTime, "minutes");
 
         //return the minutes away
-        return minutesAway + 1;
+        return minutesAway;
     }
 
     //define nextArrival function
@@ -102,5 +86,46 @@ $(document).ready(function() {
         //use the minsAway argument to return the current time and add the minutes away and format
         return moment().add(minsAway, "minutes").format("HH:mm");
     }
+
+    //define a render function that renders the DOM everytime the childsnapshot.val is run
+    function render() {
+
+        //set a variable to an empty div and do all the calculations before appending the DOM
+        var rows = $("<div>");
+
+        //for loop to iterate over childsnapshotarray 
+        for (var i = 0; i < childSnapshotArray.length; i++) {
+
+            //set a row equal to a html tr element
+            var row = $('<tr>');
+
+            //set a variable equal to the index of the childSnapshotArray
+            var information = childSnapshotArray[i];
+
+            //set the minutesAway to the minutes away function with the values of the startTime and frequency as arguments
+            var minsAway = minutesAway(information.startTime, information.frequency);
+
+            //append the row variable with the cell to hold the text of the value of the variables 
+            $(row).append($('<td>').text(information.name));
+            $(row).append($('<td>').text(information.destination));
+            $(row).append($('<td>').text(information.frequency));
+            $(row).append($('<td>').text(nextArrival(minsAway)));
+            $(row).append($('<td>').text(minsAway));
+
+            //append the rows variable with the variable row
+            rows.append(row);
+        }
+        //empty the table body and append the rows div with the rows 
+        $('#table-body').empty().append(rows.children());
+    }
+    //set a timeout function to rerender the dom every minute
+    setTimeout(function() {
+        render(); //run this function every minute
+        setInterval(render, 1000 * 60);
+
+        //get the number of milliseconds left in the current second and subract from 1000 to determine the number of milliseconds left
+        //get the number of seconds left in the current minute and subtract from 60 and multiply by 1000 to get the number of milliseconds left in the minute
+        //add both together to get the remaining milliseconds in the minute 
+    }, (1000 - new Date().getMilliseconds()) + ((60 - new Date().getSeconds()) * 1000));
 
 });
